@@ -3,6 +3,7 @@
 #include "VRPawn.h"
 #include "Engine/World.h"
 #include "Camera/CameraComponent.h"
+#include "Components/InputComponent.h"
 
 // Sets default values
 AVRPawn::AVRPawn()
@@ -42,6 +43,20 @@ void AVRPawn::Tick(float DeltaTime)
 void AVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	PlayerInputComponent->BindAction(TEXT("Trigger"), IE_Pressed, this, &AVRPawn::RightTriggerPressed);
+	PlayerInputComponent->BindAction(TEXT("Trigger"), IE_Released, this, &AVRPawn::RightTriggerReleased);
 }
+
+void AVRPawn::RightTriggerPressed()
+{
+	if (RightController)
+		RightController->TriggerPressed();
+}
+
+void AVRPawn::RightTriggerReleased()
+{
+	if (RightController)
+		RightController->TriggerReleased();
+}
+
 

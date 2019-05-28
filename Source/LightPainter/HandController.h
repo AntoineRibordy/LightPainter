@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "MotionControllerComponent.h"
-
+#include "Stroke.h"
 #include "HandController.generated.h"
 
 UCLASS()
@@ -27,6 +27,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void TriggerPressed();
+	void TriggerReleased();
+
 private:
 	
 	// Default sub object
@@ -34,7 +37,7 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class UMotionControllerComponent* MotionController;
 
-	
-
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AStroke> StrokeClass;
 };
 

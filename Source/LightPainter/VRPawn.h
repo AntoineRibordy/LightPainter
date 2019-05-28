@@ -39,4 +39,6 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AHandController> HandControllerClass;
 
+	void RightTriggerPressed();
+	void RightTriggerReleased();
 };
