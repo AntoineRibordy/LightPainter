@@ -18,11 +18,6 @@ public:
 	void Update(FVector CursorLocation);
 
 private:
-	UPROPERTY(EditDefaultsOnly)
-	class UStaticMesh* StrokeMesh;
-
-	UPROPERTY(EditDefaultsOnly)
-	class UMaterialInterface* StrokeMaterial;
 
 	FVector StartLocation = FVector::ZeroVector;
 
@@ -31,5 +26,8 @@ private:
 	// Component
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* Root;
+
+	UPROPERTY(VisibleAnywhere)
+	class UInstancedStaticMeshComponent* StrokeMeshes;
 
 };

@@ -1,9 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Stroke.h"
-#include "Components/StaticMeshComponent.h"
-#include "Materials/MaterialInstanceDynamic.h"
-#include "Components/SplineMeshComponent.h"
+#include "Components/InstancedStaticMeshComponent.h"
 
 // Sets default values
 AStroke::AStroke()
@@ -12,31 +10,16 @@ AStroke::AStroke()
 	PrimaryActorTick.bCanEverTick = true;
 
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	StrokeMeshes = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("StrokeMeshes"));
+	StrokeMeshes->SetupAttachment(Root);
 
 }
 
 void AStroke::Update(FVector CursorLocation)
 {
-	// Update endpoints
-	if (StartLocation == FVector::ZeroVector)
-	{
-		StartLocation = GetActorTransform().InverseTransformPosition(CursorLocation);
-	}
-
-	FVector EndPosition = GetActorTransform().InverseTransformPosition(CursorLocation);
-	CreateSplineMesh()->SetStartAndEnd(StartLocation, FVector::ZeroVector, EndPosition, FVector::ZeroVector);
-	StartLocation = GetActorTransform().InverseTransformPosition(CursorLocation);
-}
-
-USplineMeshComponent* AStroke::CreateSplineMesh()
-{
-	USplineMeshComponent* SplineMesh = NewObject<USplineMeshComponent>(this);
-	SplineMesh->SetMobility(EComponentMobility::Movable);
-	SplineMesh->AttachToComponent(Root, FAttachmentTransformRules::SnapToTargetIncludingScale);
-	SplineMesh->SetStaticMesh(StrokeMesh);
-	SplineMesh->SetMaterial(0, StrokeMaterial);
-	SplineMesh->SetVisibility(true);
-	SplineMesh->RegisterComponent();
-	return SplineMesh;
+	FVector LocalCursorLocation = GetActorTransform().InverseTransformPosition(CursorLocation);
+	FTransform StrokeTransform = FTransform(LocalCursorLocation);
+	StrokeMeshes->AddInstance(StrokeTransform);
+	StartLocation = LocalCursorLocation;
 }
 
