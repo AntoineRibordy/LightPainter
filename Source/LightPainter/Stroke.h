@@ -15,12 +15,21 @@ public:
 	// Sets default values for this actor's properties
 	AStroke();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	void Update(FVector CursorLocation);
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+private:
+	UPROPERTY(EditDefaultsOnly)
+	class UStaticMesh* StrokeMesh;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UMaterialInterface* StrokeMaterial;
+
+	FVector StartLocation = FVector::ZeroVector;
+
+	class USplineMeshComponent* CreateSplineMesh();
+
+	// Component
+	UPROPERTY(VisibleAnywhere)
+	USceneComponent* Root;
 
 };
