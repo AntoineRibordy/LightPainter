@@ -12,6 +12,8 @@ AStroke::AStroke()
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	StrokeMeshes = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("StrokeMeshes"));
 	StrokeMeshes->SetupAttachment(Root);
+	JointMeshes = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("JointMeshes"));
+	JointMeshes->SetupAttachment(Root);
 
 }
 
@@ -20,10 +22,13 @@ void AStroke::Update(FVector CursorLocation)
 	if (StartLocation.IsNearlyZero())
 	{
 		StartLocation = CursorLocation;
+		JointMeshes->AddInstance(GetNextJointTransform(CursorLocation));
 	}
 	FVector LocalCursorLocation = GetActorTransform().InverseTransformPosition(CursorLocation);
 	FTransform StrokeTransform = FTransform(LocalCursorLocation);
 	StrokeMeshes->AddInstance(GetNextSegmentTransform(CursorLocation));
+	// We want to add the instance at the joint, with no rotation and a scale of 1(?)
+	JointMeshes->AddInstance(GetNextJointTransform(CursorLocation));
 	StartLocation = CursorLocation;
 }
 
@@ -36,6 +41,13 @@ FTransform AStroke::GetNextSegmentTransform(FVector CurrentLocation) const
 	SegmentTransform.SetLocation(GetNextSegmentLocation(CurrentLocation));
 
 	return SegmentTransform;
+}
+
+FTransform AStroke::GetNextJointTransform(FVector CurrentLocation) const
+{
+	FTransform JointTransform;
+	JointTransform.SetLocation(GetTransform().InverseTransformPosition(CurrentLocation));
+	return JointTransform;
 }
 
 FVector AStroke::GetNextSegmentScale(FVector CurrentLocation) const

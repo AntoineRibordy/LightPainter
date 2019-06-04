@@ -4,6 +4,7 @@
 #include "Engine/World.h"
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
+#include "Saving/PainterSaveGame.h"
 
 // Sets default values
 AVRPawn::AVRPawn()
@@ -29,6 +30,9 @@ void AVRPawn::BeginPlay()
 		RightController->AttachToComponent(VRRoot, FAttachmentTransformRules::KeepRelativeTransform);
 		RightController->SetHand(EControllerHand::Right);
 	}
+
+	UPainterSaveGame* SaveGame = UPainterSaveGame::CreateGame();
+	SaveGame->Save();
 	
 }
 
