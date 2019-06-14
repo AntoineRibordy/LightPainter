@@ -2,6 +2,7 @@
 
 #include "Stroke.h"
 #include "Components/InstancedStaticMeshComponent.h"
+#include "Engine/World.h"
 
 // Sets default values
 AStroke::AStroke()
@@ -19,6 +20,7 @@ AStroke::AStroke()
 
 void AStroke::Update(FVector CursorLocation)
 {
+	ControlPoints.Add(CursorLocation);
 	if (StartLocation.IsNearlyZero())
 	{
 		StartLocation = CursorLocation;
@@ -29,6 +31,26 @@ void AStroke::Update(FVector CursorLocation)
 	// We want to add the instance at the joint, with no rotation and a scale of 1(?)
 	JointMeshes->AddInstance(GetNextJointTransform(CursorLocation));
 	StartLocation = CursorLocation;
+}
+
+FStrokeState AStroke::SerializeToStruct() const
+{
+	FStrokeState StrokeState;
+	// This will save the class of the actor, which is BP_Stroke in our case
+	StrokeState.Class = GetClass();
+	StrokeState.ControlPoints = ControlPoints;
+	return StrokeState;
+}
+
+AStroke * AStroke::SpawnAndDeserializeFromStruct(UWorld* World, const FStrokeState & StrokeState)
+{
+	// Spawn actor of class BP_Stroke and return a pointer to a AStroke Actor
+	AStroke* Stroke = World->SpawnActor<AStroke>(StrokeState.Class);
+	for (FVector ControlPoint : StrokeState.ControlPoints)
+	{
+		Stroke->Update(ControlPoint);
+	}
+	return Stroke;
 }
 
 FTransform AStroke::GetNextSegmentTransform(FVector CurrentLocation) const

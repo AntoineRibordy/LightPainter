@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Saving/PainterSaveGame.h"
+
 #include "Stroke.generated.h"
 
 UCLASS()
@@ -17,6 +19,9 @@ public:
 
 	void Update(FVector CursorLocation);
 
+	FStrokeState SerializeToStruct() const;
+	static AStroke* SpawnAndDeserializeFromStruct(UWorld* World, const FStrokeState& StrokeState);
+
 private:
 
 	FTransform GetNextSegmentTransform(FVector CurrentLocation) const;
@@ -29,8 +34,6 @@ private:
 
 	FVector StartLocation = FVector::ZeroVector;
 
-	class USplineMeshComponent* CreateSplineMesh();
-
 	// Component
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* Root;
@@ -40,4 +43,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	class UInstancedStaticMeshComponent* JointMeshes;
+
+	TArray<FVector> ControlPoints;
 };
