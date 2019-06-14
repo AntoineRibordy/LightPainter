@@ -25,7 +25,6 @@ void AStroke::Update(FVector CursorLocation)
 		JointMeshes->AddInstance(GetNextJointTransform(CursorLocation));
 	}
 	FVector LocalCursorLocation = GetActorTransform().InverseTransformPosition(CursorLocation);
-	FTransform StrokeTransform = FTransform(LocalCursorLocation);
 	StrokeMeshes->AddInstance(GetNextSegmentTransform(CursorLocation));
 	// We want to add the instance at the joint, with no rotation and a scale of 1(?)
 	JointMeshes->AddInstance(GetNextJointTransform(CursorLocation));

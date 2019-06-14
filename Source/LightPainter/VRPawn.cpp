@@ -30,9 +30,6 @@ void AVRPawn::BeginPlay()
 		RightController->AttachToComponent(VRRoot, FAttachmentTransformRules::KeepRelativeTransform);
 		RightController->SetHand(EControllerHand::Right);
 	}
-
-	UPainterSaveGame* SaveGame = UPainterSaveGame::CreateGame();
-	SaveGame->Save();
 	
 }
 
@@ -49,6 +46,8 @@ void AVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	PlayerInputComponent->BindAction(TEXT("Trigger"), IE_Pressed, this, &AVRPawn::RightTriggerPressed);
 	PlayerInputComponent->BindAction(TEXT("Trigger"), IE_Released, this, &AVRPawn::RightTriggerReleased);
+	PlayerInputComponent->BindAction(TEXT("Save"), IE_Released, this, &AVRPawn::Save);
+	PlayerInputComponent->BindAction(TEXT("Load"), IE_Released, this, &AVRPawn::Load);
 }
 
 void AVRPawn::RightTriggerPressed()
@@ -61,6 +60,28 @@ void AVRPawn::RightTriggerReleased()
 {
 	if (RightController)
 		RightController->TriggerReleased();
+}
+
+void AVRPawn::Save()
+{
+	UPainterSaveGame* Painting = UPainterSaveGame::CreateGame();
+	Painting->SetState("Hello!");
+	Painting->SerializeFromWorld(GetWorld());
+	Painting->Save();
+}
+
+void AVRPawn::Load()
+{
+	UPainterSaveGame* Painting = UPainterSaveGame::Load();
+	if (Painting) 
+	{
+		Painting->DeserializeToWorld(GetWorld());
+		UE_LOG(LogTemp, Warning, TEXT("Number: %s"), *Painting->GetState());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No save slot present"));
+	}
 }
 
 
