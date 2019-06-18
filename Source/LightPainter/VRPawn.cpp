@@ -24,7 +24,7 @@ void AVRPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
-	RightController = GetWorld()->SpawnActor<APaintBrushHandController>(PaintBrushHandControllerClass);
+	RightController = GetWorld()->SpawnActor<AHandControllerBase>(PaintBrushHandControllerClass);
 	if (RightController != nullptr)
 	{
 		RightController->AttachToComponent(VRRoot, FAttachmentTransformRules::KeepRelativeTransform);
