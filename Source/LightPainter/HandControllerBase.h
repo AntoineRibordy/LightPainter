@@ -20,9 +20,9 @@ public:
 	virtual void TriggerPressed() {};
 	virtual void TriggerReleased() {};
 
-private:
+protected:
 	// Default sub object
 	UPROPERTY(VisibleAnywhere)
-	class UMotionControllerComponent* MotionController;
+	UMotionControllerComponent* MotionController;
 
 };
