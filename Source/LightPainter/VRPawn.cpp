@@ -30,7 +30,11 @@ void AVRPawn::BeginPlay()
 		RightController->AttachToComponent(VRRoot, FAttachmentTransformRules::KeepRelativeTransform);
 		RightController->SetHand(EControllerHand::Right);
 	}
-	
+	UPainterSaveGame* Painting = UPainterSaveGame::CreateGame();
+	if (Painting && Painting->Save())
+	{
+		CurrentSlotName = Painting->GetSlotName();
+	}
 }
 
 // Called every frame
@@ -64,16 +68,17 @@ void AVRPawn::RightTriggerReleased()
 
 void AVRPawn::Save()
 {
-	UPainterSaveGame* Painting = UPainterSaveGame::CreateGame();
-	Painting->SetState("Hello!");
+	UPainterSaveGame* Painting = UPainterSaveGame::Load(CurrentSlotName);
+	if (!Painting) return;
+	Painting->SetState("Hello World");
 	Painting->SerializeFromWorld(GetWorld());
 	Painting->Save();
 }
 
 void AVRPawn::Load()
 {
-	UPainterSaveGame* Painting = UPainterSaveGame::Load();
-	if (Painting) 
+	UPainterSaveGame* Painting = UPainterSaveGame::Load(CurrentSlotName);
+	if (Painting)
 	{
 		Painting->DeserializeToWorld(GetWorld());
 		UE_LOG(LogTemp, Warning, TEXT("Number: %s"), *Painting->GetState());

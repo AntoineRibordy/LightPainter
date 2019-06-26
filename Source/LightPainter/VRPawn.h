@@ -43,4 +43,6 @@ private:
 	void RightTriggerReleased();
 	void Save();
 	void Load();
+
+	FString CurrentSlotName;
 };

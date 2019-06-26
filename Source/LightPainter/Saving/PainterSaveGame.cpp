@@ -5,6 +5,9 @@
 #include "Stroke.h"
 #include "EngineUtils.h"
 
+#include "Misc/Guid.h"
+
+
 void UPainterSaveGame::SerializeFromWorld(UWorld * World)
 {
 	// Clear array
@@ -27,11 +30,6 @@ void UPainterSaveGame::DeserializeToWorld(UWorld * World)
 	}
 }
 
-UPainterSaveGame::UPainterSaveGame()
-{
-	PaintingName = TEXT("Drawing");
-}
-
 void UPainterSaveGame::ClearWorld(UWorld * World)
 {
 	for (TActorIterator<AStroke> StrokeItr(World); StrokeItr; ++StrokeItr)
@@ -40,20 +38,24 @@ void UPainterSaveGame::ClearWorld(UWorld * World)
 	}
 }
 
+
+
 UPainterSaveGame* UPainterSaveGame::CreateGame()
 {
-	USaveGame* NewSaveGame = UGameplayStatics::CreateSaveGameObject(StaticClass());
-	return Cast<UPainterSaveGame>(NewSaveGame);
+	
+	UPainterSaveGame* NewSaveGame = Cast<UPainterSaveGame>(UGameplayStatics::CreateSaveGameObject(StaticClass()));
+	NewSaveGame->SlotName = FGuid::NewGuid().ToString();
+	return NewSaveGame;
 }
 
 bool UPainterSaveGame::Save()
 {
-	return UGameplayStatics::SaveGameToSlot(this, PaintingName, 0);
+	return UGameplayStatics::SaveGameToSlot(this, SlotName, 0);
 }
 
-UPainterSaveGame * UPainterSaveGame::Load()
+UPainterSaveGame * UPainterSaveGame::Load(FString SlotName)
 {
 	
-	UPainterSaveGame* Painting = Cast<UPainterSaveGame>(UGameplayStatics::CreateSaveGameObject(UPainterSaveGame::StaticClass()));
-	return Cast<UPainterSaveGame>(UGameplayStatics::LoadGameFromSlot(Painting->PaintingName, 0));
+	return Cast<UPainterSaveGame>(UGameplayStatics::LoadGameFromSlot(SlotName, 0));
 }
+
