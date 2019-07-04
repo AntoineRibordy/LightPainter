@@ -1,7 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "PaintingPicker.h"
-#include"PaintingGrid.h"
+#include "PaintingGrid.h"
+#include "Saving/PainterSaveGameIndex.h"
 
 // Sets default values
 APaintingPicker::APaintingPicker()
@@ -21,10 +22,14 @@ APaintingPicker::APaintingPicker()
 void APaintingPicker::BeginPlay()
 {
 	Super::BeginPlay();
-
+	UPainterSaveGameIndex* Index = UPainterSaveGameIndex::Load();
+	TArray<FString> SlotNames = Index->GetSlotNames();
+	// List all the paintings and add them to the grid
 	UPaintingGrid* PaintingGridWidget = Cast<UPaintingGrid>(PaintingGrid->GetUserWidgetObject());
 	if (!PaintingGridWidget) return;
-	PaintingGridWidget->AddPainting();
-	
+	for (int SlotIndex = 0; SlotIndex < SlotNames.Num(); SlotIndex++)
+	{
+		PaintingGridWidget->AddPainting(SlotIndex, SlotNames[SlotIndex]);
+	}  
 }
 
