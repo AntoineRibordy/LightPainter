@@ -5,6 +5,8 @@
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
 #include "Saving/PainterSaveGame.h"
+#include "Kismet/GameplayStatics.h"
+#include "PaintingGameMode.h"
 
 // Sets default values
 AVRPawn::AVRPawn()
@@ -30,11 +32,7 @@ void AVRPawn::BeginPlay()
 		RightController->AttachToComponent(VRRoot, FAttachmentTransformRules::KeepRelativeTransform);
 		RightController->SetHand(EControllerHand::Right);
 	}
-	UPainterSaveGame* Painting = UPainterSaveGame::CreateGame();
-	if (Painting && Painting->Save())
-	{
-		CurrentSlotName = Painting->GetSlotName();
-	}
+
 }
 
 // Called every frame
@@ -51,7 +49,6 @@ void AVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction(TEXT("Trigger"), IE_Pressed, this, &AVRPawn::RightTriggerPressed);
 	PlayerInputComponent->BindAction(TEXT("Trigger"), IE_Released, this, &AVRPawn::RightTriggerReleased);
 	PlayerInputComponent->BindAction(TEXT("Save"), IE_Released, this, &AVRPawn::Save);
-	PlayerInputComponent->BindAction(TEXT("Load"), IE_Released, this, &AVRPawn::Load);
 }
 
 void AVRPawn::RightTriggerPressed()
@@ -68,25 +65,13 @@ void AVRPawn::RightTriggerReleased()
 
 void AVRPawn::Save()
 {
-	UPainterSaveGame* Painting = UPainterSaveGame::Load(CurrentSlotName);
-	if (!Painting) return;
-	Painting->SetState("Hello World");
-	Painting->SerializeFromWorld(GetWorld());
-	Painting->Save();
-}
+	auto GameMode = Cast<APaintingGameMode>(GetWorld()->GetAuthGameMode());
+	if (!GameMode) return;
 
-void AVRPawn::Load()
-{
-	UPainterSaveGame* Painting = UPainterSaveGame::Load(CurrentSlotName);
-	if (Painting)
-	{
-		Painting->DeserializeToWorld(GetWorld());
-		UE_LOG(LogTemp, Warning, TEXT("Number: %s"), *Painting->GetState());
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No save slot present"));
-	}
+	GameMode->Save();
+
+	FName LevelName = FName(TEXT("MainMenu"));
+	UGameplayStatics::OpenLevel(GetWorld(), LevelName);
 }
 
 
