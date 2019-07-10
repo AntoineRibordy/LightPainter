@@ -32,14 +32,18 @@ private:
 	AHandControllerBase* RightController;
 
 	UPROPERTY(VisibleAnywhere)
+	AHandControllerBase* LeftController;
+
+	UPROPERTY(VisibleAnywhere)
 	class UCameraComponent* Camera;
 	UPROPERTY(VisibleAnywhere)
 	class USceneComponent* VRRoot;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AHandControllerBase> PaintBrushHandControllerClass;
+	TSubclassOf<AHandControllerBase> RightHandControllerClass;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AHandControllerBase> LeftHandControllerClass;
 
 	void RightTriggerPressed();
 	void RightTriggerReleased();
-	void Save();
 };

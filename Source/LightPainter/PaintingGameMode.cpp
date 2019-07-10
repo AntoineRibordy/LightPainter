@@ -11,9 +11,17 @@ void APaintingGameMode::InitGame(const FString & MapName, const FString & Option
 	UE_LOG(LogTemp, Warning, TEXT("Returned option: %s"), *SlotName);
 }
 
+void APaintingGameMode::SaveAndQuit()
+{
+	Save();
+
+	FName LevelName = FName(TEXT("MainMenu"));
+	UGameplayStatics::OpenLevel(GetWorld(), LevelName);
+}
+
 void APaintingGameMode::Save()
 {
-	// Save and exit
+
 	UPainterSaveGame* Painting = UPainterSaveGame::Load(SlotName);
 	if (!Painting) return;
 	Painting->SerializeFromWorld(GetWorld());

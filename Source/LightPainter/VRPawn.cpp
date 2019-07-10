@@ -25,12 +25,20 @@ AVRPawn::AVRPawn()
 void AVRPawn::BeginPlay()
 {
 	Super::BeginPlay();
-
-	RightController = GetWorld()->SpawnActor<AHandControllerBase>(PaintBrushHandControllerClass);
+	if (!RightHandControllerClass) return;
+	RightController = GetWorld()->SpawnActor<AHandControllerBase>(RightHandControllerClass);
 	if (RightController != nullptr)
 	{
 		RightController->AttachToComponent(VRRoot, FAttachmentTransformRules::KeepRelativeTransform);
 		RightController->SetHand(EControllerHand::Right);
+	}
+
+	if (!LeftHandControllerClass) return;
+	LeftController = GetWorld()->SpawnActor<AHandControllerBase>(LeftHandControllerClass);
+	if (LeftController != nullptr)
+	{
+		LeftController->AttachToComponent(VRRoot, FAttachmentTransformRules::KeepRelativeTransform);
+		LeftController->SetHand(EControllerHand::Left);
 	}
 
 }
@@ -48,7 +56,6 @@ void AVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	PlayerInputComponent->BindAction(TEXT("Trigger"), IE_Pressed, this, &AVRPawn::RightTriggerPressed);
 	PlayerInputComponent->BindAction(TEXT("Trigger"), IE_Released, this, &AVRPawn::RightTriggerReleased);
-	PlayerInputComponent->BindAction(TEXT("Save"), IE_Released, this, &AVRPawn::Save);
 }
 
 void AVRPawn::RightTriggerPressed()
@@ -61,17 +68,6 @@ void AVRPawn::RightTriggerReleased()
 {
 	if (RightController)
 		RightController->TriggerReleased();
-}
-
-void AVRPawn::Save()
-{
-	auto GameMode = Cast<APaintingGameMode>(GetWorld()->GetAuthGameMode());
-	if (!GameMode) return;
-
-	GameMode->Save();
-
-	FName LevelName = FName(TEXT("MainMenu"));
-	UGameplayStatics::OpenLevel(GetWorld(), LevelName);
 }
 
 

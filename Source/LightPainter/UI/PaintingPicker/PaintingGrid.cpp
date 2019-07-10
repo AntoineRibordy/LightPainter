@@ -12,7 +12,18 @@ void UPaintingGrid::AddPainting(int32 PaintingIndex, FString PaintingName)
 
 	NewWidget->SetPaintingName(PaintingName);
 
-	USizeBox* FirstChild = Cast<USizeBox>(PaintingGrid->GetChildAt(PaintingIndex));
-	if (!FirstChild) return;
-	FirstChild->AddChild(NewWidget);
+	USizeBox* Child = Cast<USizeBox>(PaintingGrid->GetChildAt(PaintingIndex));
+	if (!Child) return;
+	Child->AddChild(NewWidget);
+}
+
+void UPaintingGrid::ClearPaintings()
+{
+	if (!PaintingGrid) return;
+	for (int Index = 0; Index < PaintingGrid->GetChildrenCount(); Index++)
+	{
+		USizeBox* CardContainer = Cast<USizeBox>(PaintingGrid->GetChildAt(Index));
+		if (!CardContainer) continue;
+		CardContainer->ClearChildren();
+	}
 }

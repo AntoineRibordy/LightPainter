@@ -2,6 +2,10 @@
 
 #include "PaintingPicker.h"
 #include "PaintingGrid.h"
+#include "ActionBar.h"
+#include "PaintingGameMode.h"
+#include "Kismet/GameplayStatics.h"
+#include "Saving/PainterSaveGame.h"
 #include "Saving/PainterSaveGameIndex.h"
 
 // Sets default values
@@ -18,18 +22,47 @@ APaintingPicker::APaintingPicker()
 	ActionBar->SetupAttachment(Root);
 }
 
+void APaintingPicker::AddPainting()
+{
+	UPainterSaveGame::CreateGame();
+	
+	RefreshSlots();
+}
+
+void APaintingPicker::EnableDeleteMode()
+{
+	UPaintingGrid* PaintingGridWidget = Cast<UPaintingGrid>(PaintingGrid->GetUserWidgetObject());
+	if (!PaintingGridWidget) return;
+
+	PaintingGridWidget->ClearPaintings();
+}
+
 // Called when the game starts or when spawned
 void APaintingPicker::BeginPlay()
 {
 	Super::BeginPlay();
+	UActionBar* ActionBarWidget = Cast<UActionBar>(ActionBar->GetUserWidgetObject());
+	if (ActionBarWidget) 
+	{
+		ActionBarWidget->SetParentPicker(this);
+	}
+
+	RefreshSlots();
+}
+
+void APaintingPicker::RefreshSlots()
+{
+	UPaintingGrid* PaintingGridWidget = Cast<UPaintingGrid>(PaintingGrid->GetUserWidgetObject());
+	if (!PaintingGridWidget) return;
+
+	PaintingGridWidget->ClearPaintings();
+
 	UPainterSaveGameIndex* Index = UPainterSaveGameIndex::Load();
 	TArray<FString> SlotNames = Index->GetSlotNames();
 	// List all the paintings and add them to the grid
-	UPaintingGrid* PaintingGridWidget = Cast<UPaintingGrid>(PaintingGrid->GetUserWidgetObject());
-	if (!PaintingGridWidget) return;
 	for (int SlotIndex = 0; SlotIndex < SlotNames.Num(); SlotIndex++)
 	{
 		PaintingGridWidget->AddPainting(SlotIndex, SlotNames[SlotIndex]);
-	}  
+	}
 }
 

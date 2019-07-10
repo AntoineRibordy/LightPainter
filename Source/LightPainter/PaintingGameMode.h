@@ -20,6 +20,9 @@ public:
 	void Save();
 	void Load();
 
+	UFUNCTION()
+	void SaveAndQuit();
+
 protected:
 	virtual void BeginPlay() override;
 

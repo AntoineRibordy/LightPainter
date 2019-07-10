@@ -14,10 +14,10 @@ bool UActionBar::Initialize()
 
 void UActionBar::DeleteButtonClicked()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Delete button clicked"));
+	if (ParentPicker) ParentPicker->EnableDeleteMode();
 }
 
 void UActionBar::AddButtonClicked()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Add button clicked"));
+	if (ParentPicker) ParentPicker->AddPainting();
 }
