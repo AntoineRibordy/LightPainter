@@ -39,11 +39,20 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class USceneComponent* VRRoot;
 
+	// Config
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AHandControllerBase> RightHandControllerClass;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AHandControllerBase> LeftHandControllerClass;
+	UPROPERTY(EditDefaultsOnly)
+	float PaginationThumbstickThreshold = 0.8f;
 
 	void RightTriggerPressed();
 	void RightTriggerReleased();
+
+	void PaginateRightAxisInput(float AxisValue);
+	void UpdateCurrentPage(int32 Offset);
+
+	// State
+	int32 LastPaginationOffset = 0;
 };
